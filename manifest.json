@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Quiz Stealth Helper",
+  "version": "1.2",
+  "description": "Stealth quiz assistant with dark mode UI.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}
