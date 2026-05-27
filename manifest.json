@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Quiz Stealth Helper",
-  "version": "1.2",
-  "description": "Stealth quiz assistant with dark mode UI.",
+  "name": "Quiz Assister for Binogi",
+  "version": "1.1.0",
+  "description": "Quiz assistant for binogi with a clean Ui.",
   "permissions": ["activeTab", "scripting", "storage"],
   "action": {
     "default_popup": "popup.html"
