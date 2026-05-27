@@ -1,7 +1,6 @@
 const buttons = {
   off: document.getElementById('off'),
-  highlight: document.getElementById('highlight'),
-  sneaky: document.getElementById('sneaky')
+  highlight: document.getElementById('highlight')
 };
 
 function updateUI(activeId) {
@@ -24,16 +23,12 @@ function sendMode(mode) {
     });
   });
   updateUI(mode);
-  // Optional: Save state so it stays selected when you reopen the popup
   chrome.storage.local.set({ currentMode: mode });
 }
 
-// Click Listeners
 buttons.off.addEventListener('click', () => sendMode('off'));
 buttons.highlight.addEventListener('click', () => sendMode('highlight'));
-buttons.sneaky.addEventListener('click', () => sendMode('sneaky'));
 
-// Restore previous selection on popup open
 chrome.storage.local.get(['currentMode'], (result) => {
   if (result.currentMode) {
     updateUI(result.currentMode);
