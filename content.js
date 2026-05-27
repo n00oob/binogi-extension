@@ -96,5 +96,126 @@
     });
   }
 
+  function initVideoHook() {
+    setInterval(() => {
+      document.querySelectorAll('i.fa:not([data-hooked])').forEach(icon => {
+        const text = icon.parentElement?.textContent || '';
+        if (text.includes('Titta på film') || text.includes('Video')) {
+          icon.setAttribute('data-hooked', 'true');
+          icon.addEventListener('click', () => {
+            icon.removeAttribute('ng-class');
+            icon.classList.remove('fa-square-o');
+            icon.classList.add('fa-check-square-o');
+            
+            const container = icon.closest('.to-do');
+            if (container) {
+              container.removeAttribute('ng-class');
+              container.classList.add('completed');
+            }
+
+            const root = document.querySelector('[ng-app]') || document.body;
+            if (!window.angular) return;
+            const injector = window.angular.element(root).injector();
+            if (!injector) return;
+
+            const headers = injector.get('$http').defaults.headers;
+            const token = headers.post?.Authorization || headers.post?.authorization || headers.common?.Authorization || headers.Authorization;
+
+            const ctrl = Array.from(document.querySelectorAll('*'))
+              .map(element => window.angular.element(element).controller())
+              .find(instance => instance?.playerContentFactory);
+
+            if (!ctrl || !token) return;
+
+            const lessonId = ctrl.playerContentFactory.lesson.id;
+            const subjectId = ctrl.playerContentFactory.lesson.default_subject_id;
+
+            const payload = {
+              lesson_id: lessonId,
+              watched_seconds: 5,
+              subject_id: subjectId
+            };
+
+            fetch("https://api.binogi.se/lessons/videoReport", {
+              method: "POST",
+              headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+          }, { once: true });
+        }
+      });
+    }, 1000);
+  }
+
+  function initQuizHook() {
+    setInterval(() => {
+      document.querySelectorAll('i.fa:not([data-quiz-hooked])').forEach(icon => {
+        const text = icon.parentElement?.textContent || '';
+        if (text.includes('Gör quiz') || text.includes('Quiz')) {
+          icon.setAttribute('data-quiz-hooked', 'true');
+          icon.addEventListener('click', () => {
+            icon.removeAttribute('ng-class');
+            icon.classList.remove('fa-square-o');
+            icon.classList.add('fa-check-square-o');
+            
+            const container = icon.closest('.to-do');
+            if (container) {
+              container.removeAttribute('ng-class');
+              container.classList.add('completed');
+            }
+
+            const root = document.querySelector('[ng-app]') || document.body;
+            if (!window.angular) return;
+            const injector = window.angular.element(root).injector();
+            if (!injector) return;
+
+            const headers = injector.get('$http').defaults.headers;
+            const token = headers.post?.Authorization || headers.post?.authorization || headers.common?.Authorization || headers.Authorization;
+
+            const ctrl = Array.from(document.querySelectorAll('*'))
+              .map(element => window.angular.element(element).controller())
+              .find(instance => instance?.playerContentFactory);
+
+            if (!ctrl || !token) return;
+
+            const lessonCode = ctrl.conceptsFactory?.id || ctrl.playerContentFactory?.lesson?.code;
+            const subjectId = ctrl.playerContentFactory.lesson.default_subject_id;
+
+            for (let level = 1; level <= 3; level++) {
+              const payload = {
+                level: level,
+                lesson_code: lessonCode,
+                result: [
+                  {
+                    question_uuid: "00000000-0000-4000-8000-000000000000",
+                    result: true,
+                    language_code: "sv",
+                    answer_timestamp: Math.floor(Date.now() / 1000)
+                  }
+                ],
+                subject_id: subjectId,
+                passed: true
+              };
+
+              fetch("https://api.binogi.se/lessons/quizReport", {
+                method: "POST",
+                headers: {
+                  "Authorization": token,
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+              });
+            }
+          }, { once: true });
+        }
+      });
+    }, 1000);
+  }
+
   initWatcher();
+  initVideoHook();
+  initQuizHook();
 })();
