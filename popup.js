@@ -1,6 +1,7 @@
 const buttons = {
   off: document.getElementById('off'),
-  highlight: document.getElementById('highlight')
+  highlight: document.getElementById('highlight'),
+  stealth: document.getElementById('stealth')
 };
 
 function updateUI(activeId) {
